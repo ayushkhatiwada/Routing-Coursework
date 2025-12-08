@@ -1,0 +1,11 @@
+Answer the following questions on the behaviour of the baseline EGP when run on stage3-config.json. 
+
+Q1. Consider the first data packet sent in the simulation (i.e., after the first 'send' event is processed). What is the forwarding path followed by the packet? Will it be dropped or consumed by any router? Explain.
+
+Q2. With respect to the revenues achieved by the baseline EGP at every time step, how many times will such revenues change between time 9 and 14? Why?
+
+Q3. Consider the second data packet sent in the simulation. What is the forwarding path followed by the packet? Will it be dropped or consumed by any router? Explain.
+
+Q4. Focus on the third data packet sent in the simulation. What is the forwarding path followed by the packet? Will it be dropped or consumed by any router? Explain.
+
+Q5. With respect to the revenues achieved by the baseline EGP at every time step, how many times will the revenues change between time 16 and 25? Why?

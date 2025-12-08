@@ -1,0 +1,226 @@
+{
+  "routers": [
+    {
+      "rId": "tpeer0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "r0",
+      "ipAddress": "3.3.3.3",
+      "routingProtocol": "EGP"
+    },
+    {
+      "rId": "prov0",
+      "ipAddress": "4.4.4.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "fpeer0",
+      "ipAddress": "5.5.5.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "tpeer1",
+      "ipAddress": "6.1.1.1",
+      "routingProtocol": "ext"
+    }
+  ],
+  "links": [
+    {
+      "id": "tpeer0-link",
+      "interfaces": ["r0-eth0", "tpeer0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-4;+1"
+      }
+    },
+    {
+      "id": "cust-link",
+      "interfaces": ["r0-eth1", "cust0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+3"
+      }
+    },
+    {
+      "id": "prov0-link",
+      "interfaces": ["r0-eth2", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-2"
+      }
+    },
+    {
+      "id": "fpeer0-link",
+      "interfaces": ["r0-eth3", "fpeer0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "0"
+      }
+    },
+    {
+      "id": "tpeer1-link",
+      "interfaces": ["r0-eth4", "tpeer1-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-3;+3"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-eth0": "1.1.1.1",
+          "r0-eth1": "2.2.2.2",
+          "r0-eth2": "4.4.4.1",
+          "r0-eth3": "5.5.5.2",
+          "r0-eth4": "6.1.1.1"
+        },
+        "relations": {
+          "r0-eth0": "advanced-peer",
+          "r0-eth1": "customer",
+          "r0-eth2": "provider",
+          "r0-eth3": "peer",
+          "r0-eth4": "advanced-peer"
+        }
+      }
+    },
+    "ext": {
+      "tpeer0": {
+        "AS-ID": "T",
+        "relation": "advanced-peer"
+      },
+      "cust0": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      },
+      "prov0": {
+        "AS-ID": "P",
+        "relation": "provider"
+      },
+      "fpeer0": {
+        "AS-ID": "X",
+        "relation": "peer"
+      },
+      "tpeer1": {
+        "AS-ID": "S",
+        "relation": "advanced-peer"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "tpeer0",
+      "prefix": "50.0.0.0/16",
+      "AS-path": "T E"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "tpeer0",
+      "prefix": "100.0.0.0/16",
+      "AS-path": "T X D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "tpeer1",
+      "prefix": "50.0.0.0/16",
+      "AS-path": "S N E"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "125.0.0.0/15",
+      "AS-path": "P L"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "150.0.0.0/16",
+      "AS-path": "P H W"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "175.0.0.0/24",
+      "AS-path": "P H J"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "fpeer0",
+      "prefix": "100.0.0.0/16",
+      "AS-path": "X D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.2.0/24",
+      "AS-path": "Z"
+    },
+    {
+      "type": "addprivatepath",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "25.0.0.0/24",
+      "AS-path": "Z K"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "advert",
+      "time": 6,
+      "router": "tpeer0",
+      "prefix": "25.0.0.0/24",
+      "AS-path": "T K"
+    },
+    {
+      "type": "newlinkproperties",
+      "time": 10,
+      "link": "tpeer0-link",
+      "properties": {
+        "revenues": "-2;+1"
+      }
+    },
+    {
+      "type": "dumpfib",
+      "time": 15,
+      "args": "all"
+    },
+    {
+      "type": "addprivatepath",
+      "time": 16,
+      "router": "fpeer0",
+      "prefix": "2.2.2.0/24",
+      "AS-path": "X D Z"
+    },
+    {
+      "type": "downlink",
+      "time": 16,
+      "link": ["r0-eth3", "fpeer0-eth0"]
+    },
+    {
+      "type": "stop",
+      "time": 25
+    }
+  ]
+}
+

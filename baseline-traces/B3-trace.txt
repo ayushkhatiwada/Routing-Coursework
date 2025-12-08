@@ -1,0 +1,406 @@
+
+** Configuration Loading **
+
+Reading file tests-configs/B3-config.json
+Created router r0
+Created router cust0
+Created router prov0
+Created router peer1
+Created router peer2
+Created router cust1
+Created router prov1
+Node r0 sources 0 traffic units
+Node cust0 sources 7 traffic units
+Node prov0 sources 100 traffic units
+Node prov1 sources 100 traffic units
+Node cust1 sources 6 traffic units
+Node peer1 sources 10 traffic units
+Node peer2 sources 6 traffic units
+Node 0.0.0.0/0 attracts 100 traffic units
+Node 100.0.0.0/24 attracts 4 traffic units
+Node 200.0.0.0/24 attracts 4 traffic units
+Node 2.2.0.0/16 attracts 5 traffic units
+Node 15.1.1.0/24 attracts 4 traffic units
+Adding link (r0.r0-c0 <--> cust0.cust0-i0) to r0
+Adding link (r0.r0-c0 <--> cust0.cust0-i0) to cust0
+Adding link (r0.r0-pr0 <--> prov0.prov0-eth0) to r0
+Adding link (r0.r0-pr0 <--> prov0.prov0-eth0) to prov0
+Adding link (r0.r0-pr1 <--> prov1.prov1-i0) to r0
+Adding link (r0.r0-pr1 <--> prov1.prov1-i0) to prov1
+Adding link (r0.r0-c1 <--> cust1.cust1-eth2) to r0
+Adding link (r0.r0-c1 <--> cust1.cust1-eth2) to cust1
+Adding link (r0.r0-pe1 <--> peer1.peer1-eth0) to r0
+Adding link (r0.r0-pe1 <--> peer1.peer1-eth0) to peer1
+Adding link (r0.r0-pe2 <--> peer2.peer2-i1) to r0
+Adding link (r0.r0-pe2 <--> peer2.peer2-i1) to peer2
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'Q']
+Adding Event 'advert' occurring at time 1 with parameters ['prov1', '0.0.0.0/0', 'P']
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '100.0.0.0/24', 'Q M']
+Adding Event 'advert' occurring at time 1 with parameters ['prov1', '100.0.0.0/24', 'P M']
+Adding Event 'advert' occurring at time 1 with parameters ['peer1', '100.0.0.0/24', 'X L M']
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '200.0.0.0/24', 'Q H K']
+Adding Event 'advert' occurring at time 1 with parameters ['prov1', '200.0.0.0/24', 'P K']
+Adding Event 'advert' occurring at time 1 with parameters ['peer1', '200.0.0.0/24', 'X L K']
+Adding Event 'advert' occurring at time 1 with parameters ['peer2', '200.0.0.0/24', 'W G H K']
+Adding Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.0.0/16', 'C']
+Adding Event 'advert' occurring at time 1 with parameters ['cust1', '15.1.1.0/24', 'Z Z']
+Adding Event 'dumpfib' occurring at time 4 with parameters ['all']
+Adding Event 'downlink' occurring at time 5 with parameters ['r0-pr0', 'prov0-eth0']
+Adding Event 'dumpfib' occurring at time 8 with parameters ['all']
+Adding Event 'uplink' occurring at time 9 with parameters ['r0-pr0', 'prov0-eth0']
+Adding Event 'dumpfib' occurring at time 11 with parameters ['all']
+Adding Event 'downlink' occurring at time 15 with parameters ['r0-pe1', 'peer1-eth0']
+Adding Event 'dumpfib' occurring at time 18 with parameters ['all']
+Adding Event 'addprivatepath' occurring at time 19 with parameters ['peer1', '100.0.0.0/24', 'X I M']
+Adding Event 'advert' occurring at time 19 with parameters ['peer1', '200.0.0.0/24', 'X K']
+Adding Event 'uplink' occurring at time 21 with parameters ['r0-pe1', 'peer1-eth0']
+Adding Event 'dumpfib' occurring at time 25 with parameters ['all']
+
+
+** Simulation **
+
+= Time 1 =
+
+Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'Q']
+Event 'advert' occurring at time 1 with parameters ['prov1', '0.0.0.0/0', 'P']
+Event 'advert' occurring at time 1 with parameters ['prov0', '100.0.0.0/24', 'Q M']
+Event 'advert' occurring at time 1 with parameters ['prov1', '100.0.0.0/24', 'P M']
+Event 'advert' occurring at time 1 with parameters ['peer1', '100.0.0.0/24', 'X L M']
+Event 'advert' occurring at time 1 with parameters ['prov0', '200.0.0.0/24', 'Q H K']
+Event 'advert' occurring at time 1 with parameters ['prov1', '200.0.0.0/24', 'P K']
+Event 'advert' occurring at time 1 with parameters ['peer1', '200.0.0.0/24', 'X L K']
+Event 'advert' occurring at time 1 with parameters ['peer2', '200.0.0.0/24', 'W G H K']
+Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.0.0/16', 'C']
+Event 'advert' occurring at time 1 with parameters ['cust1', '15.1.1.0/24', 'Z Z']
+
+
+= Time 2 =
+
+
+= Time 3 =
+
+
+= Time 4 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.0.0/16 via r0-c0
+15.1.1.0/24 via r0-c1
+100.0.0.0/24 via r0-pe1
+200.0.0.0/24 via r0-pe1
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.0.0/16 directly connected
+15.1.1.0/24 via cust0-i0
+100.0.0.0/24 via cust0-i0
+200.0.0.0/24 via cust0-i0
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov0-eth0
+15.1.1.0/24 via prov0-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer1
+2.2.0.0/16 via peer1-eth0
+15.1.1.0/24 via peer1-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer2
+2.2.0.0/16 via peer2-i1
+15.1.1.0/24 via peer2-i1
+200.0.0.0/24 directly connected
+
+FIB router cust1
+0.0.0.0/0 via cust1-eth2
+2.2.0.0/16 via cust1-eth2
+15.1.1.0/24 directly connected
+100.0.0.0/24 via cust1-eth2
+200.0.0.0/24 via cust1-eth2
+
+FIB router prov1
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov1-i0
+15.1.1.0/24 via prov1-i0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+
+= Time 5 =
+
+Setting link (r0.r0-pr0 <--> prov0.prov0-eth0) DOWN
+
+
+= Time 6 =
+
+
+= Time 7 =
+
+
+= Time 8 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr1
+2.2.0.0/16 via r0-c0
+15.1.1.0/24 via r0-c1
+100.0.0.0/24 via r0-pe1
+200.0.0.0/24 via r0-pe1
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.0.0/16 directly connected
+15.1.1.0/24 via cust0-i0
+100.0.0.0/24 via cust0-i0
+200.0.0.0/24 via cust0-i0
+
+FIB router prov0
+0.0.0.0/0 directly connected
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer1
+2.2.0.0/16 via peer1-eth0
+15.1.1.0/24 via peer1-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer2
+2.2.0.0/16 via peer2-i1
+15.1.1.0/24 via peer2-i1
+200.0.0.0/24 directly connected
+
+FIB router cust1
+0.0.0.0/0 via cust1-eth2
+2.2.0.0/16 via cust1-eth2
+15.1.1.0/24 directly connected
+100.0.0.0/24 via cust1-eth2
+200.0.0.0/24 via cust1-eth2
+
+FIB router prov1
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov1-i0
+15.1.1.0/24 via prov1-i0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+
+= Time 9 =
+
+Setting link (r0.r0-pr0 <--> prov0.prov0-eth0) UP
+
+
+= Time 10 =
+
+
+= Time 11 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.0.0/16 via r0-c0
+15.1.1.0/24 via r0-c1
+100.0.0.0/24 via r0-pe1
+200.0.0.0/24 via r0-pe1
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.0.0/16 directly connected
+15.1.1.0/24 via cust0-i0
+100.0.0.0/24 via cust0-i0
+200.0.0.0/24 via cust0-i0
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov0-eth0
+15.1.1.0/24 via prov0-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer1
+2.2.0.0/16 via peer1-eth0
+15.1.1.0/24 via peer1-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer2
+2.2.0.0/16 via peer2-i1
+15.1.1.0/24 via peer2-i1
+200.0.0.0/24 directly connected
+
+FIB router cust1
+0.0.0.0/0 via cust1-eth2
+2.2.0.0/16 via cust1-eth2
+15.1.1.0/24 directly connected
+100.0.0.0/24 via cust1-eth2
+200.0.0.0/24 via cust1-eth2
+
+FIB router prov1
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov1-i0
+15.1.1.0/24 via prov1-i0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+
+= Time 12 =
+
+
+= Time 13 =
+
+
+= Time 14 =
+
+
+= Time 15 =
+
+Setting link (r0.r0-pe1 <--> peer1.peer1-eth0) DOWN
+
+
+= Time 16 =
+
+
+= Time 17 =
+
+
+= Time 18 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.0.0/16 via r0-c0
+15.1.1.0/24 via r0-c1
+100.0.0.0/24 via r0-pr0
+200.0.0.0/24 via r0-pe2
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.0.0/16 directly connected
+15.1.1.0/24 via cust0-i0
+100.0.0.0/24 via cust0-i0
+200.0.0.0/24 via cust0-i0
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov0-eth0
+15.1.1.0/24 via prov0-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer1
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer2
+2.2.0.0/16 via peer2-i1
+15.1.1.0/24 via peer2-i1
+200.0.0.0/24 directly connected
+
+FIB router cust1
+0.0.0.0/0 via cust1-eth2
+2.2.0.0/16 via cust1-eth2
+15.1.1.0/24 directly connected
+100.0.0.0/24 via cust1-eth2
+200.0.0.0/24 via cust1-eth2
+
+FIB router prov1
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov1-i0
+15.1.1.0/24 via prov1-i0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+
+= Time 19 =
+
+Event 'addprivatepath' occurring at time 19 with parameters ['peer1', '100.0.0.0/24', 'X I M']
+Event 'advert' occurring at time 19 with parameters ['peer1', '200.0.0.0/24', 'X K']
+
+
+= Time 20 =
+
+
+= Time 21 =
+
+Setting link (r0.r0-pe1 <--> peer1.peer1-eth0) UP
+
+
+= Time 22 =
+
+
+= Time 23 =
+
+
+= Time 24 =
+
+
+= Time 25 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.0.0/16 via r0-c0
+15.1.1.0/24 via r0-c1
+100.0.0.0/24 via r0-pr0
+200.0.0.0/24 via r0-pe1
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.0.0/16 directly connected
+15.1.1.0/24 via cust0-i0
+100.0.0.0/24 via cust0-i0
+200.0.0.0/24 via cust0-i0
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov0-eth0
+15.1.1.0/24 via prov0-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer1
+2.2.0.0/16 via peer1-eth0
+15.1.1.0/24 via peer1-eth0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+FIB router peer2
+2.2.0.0/16 via peer2-i1
+15.1.1.0/24 via peer2-i1
+200.0.0.0/24 directly connected
+
+FIB router cust1
+0.0.0.0/0 via cust1-eth2
+2.2.0.0/16 via cust1-eth2
+15.1.1.0/24 directly connected
+100.0.0.0/24 via cust1-eth2
+200.0.0.0/24 via cust1-eth2
+
+FIB router prov1
+0.0.0.0/0 directly connected
+2.2.0.0/16 via prov1-i0
+15.1.1.0/24 via prov1-i0
+100.0.0.0/24 directly connected
+200.0.0.0/24 directly connected
+
+
+= Time 26 =
+
+
+= Time 27 =
+
+
+= Time 28 =
+
+
+= Time 29 =
+
+
+
+** Simulation Report **
+
+Path revenues per time step: [0, 0, 0, 333, 87, 188, 188, 188, 188, 145, 333, 333, 333, 333, -151, 128, 128, 128, 128, 128, 128, 115, 293, 293, 293, 293, 293, 293, 293]
+Total path revenues: 5432
+Total number of messages received by EXT routers: 16
+Total revenues: 5400
+
+

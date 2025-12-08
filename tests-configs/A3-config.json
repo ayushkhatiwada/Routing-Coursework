@@ -1,0 +1,209 @@
+{
+  "routers": [
+    {
+      "rId": "r0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "EGP"
+    },
+    {
+      "rId": "prov0",
+      "ipAddress": "3.3.3.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "prov1",
+      "ipAddress": "4.2.7.5",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "prov2",
+      "ipAddress": "5.1.1.3",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust1",
+      "ipAddress": "20.0.0.2",
+      "routingProtocol": "ext"
+    }
+  ],
+  "links": [
+    {
+      "id": "lp0",
+      "interfaces": ["r0-pr0", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-12"
+      }
+    },
+    {
+      "id": "lp1",
+      "interfaces": ["r0-pr1", "prov1-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-12"
+      }
+    },
+    {
+      "id": "lp2",
+      "interfaces": ["r0-pr2", "prov2-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-15"
+      }
+    },
+    {
+      "id": "lc0",
+      "interfaces": ["r0-c0", "cust0-i0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+16"
+      }
+    },
+    {
+      "id": "lc1",
+      "interfaces": ["r0-c1", "cust1-i1"],
+      "status": "up",
+      "properties": {
+        "revenues": "+11"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-pr0": "3.3.3.1",
+          "r0-pr1": "4.2.7.5",
+          "r0-pr2": "5.1.1.3",
+          "r0-c0": "2.2.2.2",
+          "r0-c1": "20.0.0.2"
+        },
+        "relations": {
+          "r0-pr0": "provider",
+          "r0-pr1": "provider",
+          "r0-pr2": "provider",
+          "r0-c0": "customer",
+          "r0-c1": "customer"
+        }
+      }
+    },
+    "ext": {
+      "prov0": {
+        "AS-ID": "A",
+        "relation": "provider"
+      },
+      "prov1": {
+        "AS-ID": "F",
+        "relation": "provider"
+      },
+      "prov2": {
+        "AS-ID": "Q",
+        "relation": "provider"
+      },
+      "cust0": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      },
+      "cust1": {
+        "AS-ID": "Y",
+        "relation": "customer"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "A D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov1",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "F G D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov2",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "Q D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.2.0/24",
+      "AS-path": "Z"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust1",
+      "prefix": "20.0.0.0/24",
+      "AS-path": "Y"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "advert",
+      "time": 6,
+      "router": "prov1",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "F G H D"
+    },
+    {
+      "type": "dumpfib",
+      "time": 9,
+      "args": "all"
+    },
+    {
+      "type": "advert",
+      "time": 10,
+      "router": "prov1",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "F G L D"
+    },
+    {
+      "type": "advert",
+      "time": 12,
+      "router": "prov0",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "A B C K J L D"
+    },
+    {
+      "type": "dumpfib",
+      "time": 15,
+      "args": "all"
+    },
+    {
+      "type": "newlinkproperties",
+      "time": 20,
+      "link": "lp2",
+      "properties": {
+        "revenues": "-10"
+      }
+    },
+    {
+      "type": "dumpfib",
+      "time": 24,
+      "args": "all"
+    },
+    {
+      "type": "stop",
+      "time": 26
+    }
+  ]
+}

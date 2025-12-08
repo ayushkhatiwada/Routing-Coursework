@@ -1,0 +1,124 @@
+
+** Configuration Loading **
+
+Reading file tests-configs/A1-config.json
+Created router prov0
+Created router cust0
+Created router r0
+Node r0 sources 0 traffic units
+Node prov0 sources 100 traffic units
+Node cust0 sources 10 traffic units
+Node 0.0.0.0/0 attracts 100 traffic units
+Node 2.2.2.0/24 attracts 4 traffic units
+Node 2.2.4.0/24 attracts 4 traffic units
+Adding link (r0.r0-eth0 <--> prov0.prov0-eth0) to r0
+Adding link (r0.r0-eth0 <--> prov0.prov0-eth0) to prov0
+Adding link (r0.r0-eth1 <--> cust0.cust0-eth0) to r0
+Adding link (r0.r0-eth1 <--> cust0.cust0-eth0) to cust0
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'A']
+Adding Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.2.0/24 2.2.4.0/24', 'Z']
+Adding Event 'dumpfib' occurring at time 3 with parameters ['all']
+Adding Event 'dumpfib' occurring at time 4 with parameters ['all']
+Adding Event 'send' occurring at time 6 with parameters ['prov0', '2.2.2.1']
+Adding Event 'send' occurring at time 10 with parameters ['prov0', '2.1.1.1']
+Adding Event 'send' occurring at time 10 with parameters ['prov0', '2.2.4.1']
+Adding Event 'send' occurring at time 10 with parameters ['cust0', '2.1.1.1']
+
+
+** Simulation **
+
+= Time 1 =
+
+Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'A']
+Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.2.0/24 2.2.4.0/24', 'Z']
+
+
+= Time 2 =
+
+
+= Time 3 =
+
+FIB router prov0
+0.0.0.0/0 directly connected
+
+FIB router cust0
+2.2.2.0/24 directly connected
+2.2.4.0/24 directly connected
+
+FIB router r0
+0.0.0.0/0 via r0-eth0
+2.2.2.0/24 via r0-eth1
+2.2.4.0/24 via r0-eth1
+
+
+= Time 4 =
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.2.0/24 via prov0-eth0
+2.2.4.0/24 via prov0-eth0
+
+FIB router cust0
+0.0.0.0/0 via cust0-eth0
+2.2.2.0/24 directly connected
+2.2.4.0/24 directly connected
+
+FIB router r0
+0.0.0.0/0 via r0-eth0
+2.2.2.0/24 via r0-eth1
+2.2.4.0/24 via r0-eth1
+
+
+= Time 5 =
+
+
+= Time 6 =
+
+Event: Sending one data packet from 1.1.1.1 to 2.2.2.1
+Router prov0: Sent NEW packet <type data src 1.1.1.1:5001 dst 2.2.2.1:8080 ttl 254 seq 1> over outgoing interface prov0-eth0
+
+
+= Time 7 =
+
+Router r0: Forwarded packet <type data src 1.1.1.1:5001 dst 2.2.2.1:8080 ttl 253 seq 1 path (prov0->r0)> over outgoing interface r0-eth1
+
+
+= Time 8 =
+
+Router cust0: Consumed packet <type data src 1.1.1.1:5001 dst 2.2.2.1:8080 ttl 253 seq 1 path (prov0->r0) (r0->cust0)>
+
+
+= Time 9 =
+
+
+= Time 10 =
+
+Event: Sending one data packet from 1.1.1.1 to 2.1.1.1
+Router prov0: Consumed packet <type data src 1.1.1.1:5002 dst 2.1.1.1:8080 ttl 255 seq 2>
+Event: Sending one data packet from 1.1.1.1 to 2.2.4.1
+Router prov0: Sent NEW packet <type data src 1.1.1.1:5003 dst 2.2.4.1:8080 ttl 254 seq 3> over outgoing interface prov0-eth0
+Event: Sending one data packet from 2.2.2.2 to 2.1.1.1
+Router cust0: Sent NEW packet <type data src 2.2.2.2:5004 dst 2.1.1.1:8080 ttl 254 seq 4> over outgoing interface cust0-eth0
+
+
+= Time 11 =
+
+Router r0: Forwarded packet <type data src 1.1.1.1:5003 dst 2.2.4.1:8080 ttl 253 seq 3 path (prov0->r0)> over outgoing interface r0-eth1
+Router r0: Forwarded packet <type data src 2.2.2.2:5004 dst 2.1.1.1:8080 ttl 253 seq 4 path (cust0->r0)> over outgoing interface r0-eth0
+
+
+= Time 12 =
+
+Router prov0: Consumed packet <type data src 2.2.2.2:5004 dst 2.1.1.1:8080 ttl 253 seq 4 path (cust0->r0) (r0->prov0)>
+Router cust0: Consumed packet <type data src 1.1.1.1:5003 dst 2.2.4.1:8080 ttl 253 seq 3 path (prov0->r0) (r0->cust0)>
+
+
+
+** Simulation Report **
+
+Path revenues per time step: [0, 0, 0, 59, 59, 59, 59, 59, 59, 59, 59, 59]
+Total path revenues: 531
+Total number of messages received by EXT routers: 2
+Total revenues: 527
+
+

@@ -1,0 +1,122 @@
+{
+  "routers": [
+    {
+      "rId": "tpeer0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "r0",
+      "ipAddress": "3.3.3.3",
+      "routingProtocol": "EGP"
+    },
+    {
+      "rId": "prov0",
+      "ipAddress": "4.4.4.1",
+      "routingProtocol": "ext"
+    }    
+  ],
+  "links": [
+    {
+      "id": "tpeer-link",
+      "interfaces": ["r0-eth0", "tpeer0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-2;+1"
+      }
+
+    },
+    {
+      "id": "cust-link",
+      "interfaces": ["r0-eth1", "cust0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+4"
+      }
+    },
+    {
+      "id": "prov-link",
+      "interfaces": ["r0-eth2", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-4"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-eth0": "1.1.1.1",
+          "r0-eth1": "2.2.2.2",
+          "r0-eth2": "4.4.4.1"
+        },
+        "relations": {
+          "r0-eth0": "advanced-peer",
+          "r0-eth1": "customer",
+          "r0-eth2": "provider"
+        }
+      }
+    },
+    "ext": {
+      "tpeer0": {
+        "AS-ID": "T",
+        "relation": "advanced-peer"
+      },
+      "cust0": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      },
+      "prov0": {
+        "AS-ID": "P",
+        "relation": "provider"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "tpeer0",
+      "prefix": "100.0.0.0/16",
+      "AS-path": "T D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "200.0.0.0/8",
+      "AS-path": "P L"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.2.0/24 2.2.4.0/24",
+      "AS-path": "Z"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "newlinkproperties",
+      "time": 8,
+      "link": "cust-link",
+      "properties": {
+        "revenues": "+6"
+      }
+    },
+    {
+      "type": "stop",
+      "time": 14
+    }
+  ]
+}

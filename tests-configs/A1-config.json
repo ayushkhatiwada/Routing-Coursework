@@ -1,0 +1,116 @@
+{
+  "routers": [
+    {
+      "rId": "prov0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "r0",
+      "ipAddress": "3.3.3.3",
+      "routingProtocol": "EGP"
+    }
+  ],
+  "links": [
+    {
+      "id": "prov-link",
+      "interfaces": ["r0-eth0", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-11"
+      }
+    },
+    {
+      "id": "cust-link",
+      "interfaces": ["r0-eth1", "cust0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+14"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-eth0": "1.1.1.1",
+          "r0-eth1": "2.2.2.2"
+        },
+        "relations": {
+          "r0-eth0": "provider",
+          "r0-eth1": "customer"
+        }
+      }
+    },
+    "ext": {
+      "prov0": {
+        "AS-ID": "A",
+        "relation": "provider"
+      },
+      "cust0": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "0.0.0.0/0",
+      "AS-path": "A"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.2.0/24 2.2.4.0/24",
+      "AS-path": "Z"
+    },
+    {
+      "type": "dumpfib",
+      "time": 3,
+      "args": "all"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "send",
+      "time": 6,
+      "src": "prov0",
+      "dest": "2.2.2.1"
+    },
+    {
+      "type": "send",
+      "time": 10,
+      "src": "prov0",
+      "dest": "2.1.1.1"
+    },
+    {
+      "type": "send",
+      "time": 10,
+      "src": "prov0",
+      "dest": "2.2.4.1"
+    },
+    {
+      "type": "send",
+      "time": 10,
+      "src": "cust0",
+      "dest": "2.1.1.1"
+    },
+    {
+      "type": "stop",
+      "time": 13
+    }
+  ]
+}

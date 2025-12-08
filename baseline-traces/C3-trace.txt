@@ -1,0 +1,146 @@
+
+** Configuration Loading **
+
+Reading file tests-configs/C3-config.json
+Created router tpeer0
+Created router cust0
+Created router r0
+Created router prov0
+Created router prov1
+Node r0 sources 0 traffic units
+Node tpeer0 sources 17 traffic units
+Node cust0 sources 14 traffic units
+Node prov0 sources 15 traffic units
+Node prov1 sources 12 traffic units
+Node 100.0.0.0/8 attracts 11 traffic units
+Node 25.0.0.0/24 attracts 4 traffic units
+Node 200.0.0.0/16 attracts 5 traffic units
+Node 150.0.0.0/16 attracts 5 traffic units
+Node 2.2.2.0/24 attracts 4 traffic units
+Node 2.2.3.0/24 attracts 4 traffic units
+Adding link (r0.r0-eth0 <--> tpeer0.tpeer0-eth0) to r0
+Adding link (r0.r0-eth0 <--> tpeer0.tpeer0-eth0) to tpeer0
+Adding link (r0.r0-eth1 <--> cust0.cust0-eth0) to r0
+Adding link (r0.r0-eth1 <--> cust0.cust0-eth0) to cust0
+Adding link (r0.r0-eth2 <--> prov0.prov0-eth0) to r0
+Adding link (r0.r0-eth2 <--> prov0.prov0-eth0) to prov0
+Adding link (r0.r0-eth3 <--> prov1.prov1-eth0) to r0
+Adding link (r0.r0-eth3 <--> prov1.prov1-eth0) to prov1
+Adding Event 'advert' occurring at time 1 with parameters ['tpeer0', '100.0.0.0/8', 'T D']
+Adding Event 'advert' occurring at time 1 with parameters ['tpeer0', '25.0.0.0/24', 'T A K']
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '200.0.0.0/16', 'P L']
+Adding Event 'advert' occurring at time 1 with parameters ['prov1', '150.0.0.0/16', 'Q U']
+Adding Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.2.0/24 2.2.3.0/24', 'Z']
+Adding Event 'dumpfib' occurring at time 4 with parameters ['all']
+Adding Event 'advert' occurring at time 6 with parameters ['cust0', '25.0.0.0/24', 'Z B A K']
+Adding Event 'advert' occurring at time 10 with parameters ['prov1', '200.0.0.0/16', 'Q L']
+Adding Event 'addprivatepath' occurring at time 14 with parameters ['prov0', '2.2.2.0/24 2.2.3.0/24', 'P L Z']
+Adding Event 'downlink' occurring at time 14 with parameters ['r0-eth2', 'prov0-eth0']
+
+
+** Simulation **
+
+= Time 1 =
+
+Event 'advert' occurring at time 1 with parameters ['tpeer0', '100.0.0.0/8', 'T D']
+Event 'advert' occurring at time 1 with parameters ['tpeer0', '25.0.0.0/24', 'T A K']
+Event 'advert' occurring at time 1 with parameters ['prov0', '200.0.0.0/16', 'P L']
+Event 'advert' occurring at time 1 with parameters ['prov1', '150.0.0.0/16', 'Q U']
+Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.2.0/24 2.2.3.0/24', 'Z']
+
+
+= Time 2 =
+
+
+= Time 3 =
+
+
+= Time 4 =
+
+FIB router tpeer0
+2.2.2.0/24 via tpeer0-eth0
+2.2.3.0/24 via tpeer0-eth0
+25.0.0.0/24 directly connected
+100.0.0.0/8 directly connected
+150.0.0.0/16 via tpeer0-eth0
+200.0.0.0/16 via tpeer0-eth0
+
+FIB router cust0
+2.2.2.0/24 directly connected
+2.2.3.0/24 directly connected
+25.0.0.0/24 via cust0-eth0
+100.0.0.0/8 via cust0-eth0
+150.0.0.0/16 via cust0-eth0
+200.0.0.0/16 via cust0-eth0
+
+FIB router r0
+2.2.2.0/24 via r0-eth1
+2.2.3.0/24 via r0-eth1
+25.0.0.0/24 via r0-eth0
+100.0.0.0/8 via r0-eth0
+150.0.0.0/16 via r0-eth3
+200.0.0.0/16 via r0-eth2
+
+FIB router prov0
+2.2.2.0/24 via prov0-eth0
+2.2.3.0/24 via prov0-eth0
+200.0.0.0/16 directly connected
+
+FIB router prov1
+2.2.2.0/24 via prov1-eth0
+2.2.3.0/24 via prov1-eth0
+150.0.0.0/16 directly connected
+
+
+= Time 5 =
+
+
+= Time 6 =
+
+Event 'advert' occurring at time 6 with parameters ['cust0', '25.0.0.0/24', 'Z B A K']
+
+
+= Time 7 =
+
+
+= Time 8 =
+
+
+= Time 9 =
+
+
+= Time 10 =
+
+Event 'advert' occurring at time 10 with parameters ['prov1', '200.0.0.0/16', 'Q L']
+
+
+= Time 11 =
+
+
+= Time 12 =
+
+
+= Time 13 =
+
+
+= Time 14 =
+
+Event 'addprivatepath' occurring at time 14 with parameters ['prov0', '2.2.2.0/24 2.2.3.0/24', 'P L Z']
+Setting link (r0.r0-eth2 <--> prov0.prov0-eth0) DOWN
+
+
+= Time 15 =
+
+
+= Time 16 =
+
+
+
+** Simulation Report **
+
+Path revenues per time step: [0, 0, 0, 12, 12, 32, 32, 64, 64, 64, 64, 64, 64, -122, -66, -66]
+Total path revenues: 218
+Total number of messages received by EXT routers: 10
+Total revenues: 198
+
+

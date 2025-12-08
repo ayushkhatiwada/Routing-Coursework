@@ -1,0 +1,203 @@
+
+** Configuration Loading **
+
+Reading file tests-configs/B1-config.json
+Created router r0
+Created router prov0
+Created router peer1
+Created router cust0
+Node r0 sources 0 traffic units
+Node prov0 sources 100 traffic units
+Node peer1 sources 14 traffic units
+Node cust0 sources 15 traffic units
+Node 0.0.0.0/0 attracts 100 traffic units
+Node 4.4.4.0/22 attracts 4 traffic units
+Node 2.2.2.0/24 attracts 4 traffic units
+Node 2.2.3.0/24 attracts 4 traffic units
+Node 2.2.128.0/17 attracts 5 traffic units
+Adding link (r0.r0-pr0 <--> prov0.prov0-eth0) to r0
+Adding link (r0.r0-pr0 <--> prov0.prov0-eth0) to prov0
+Adding link (r0.r0-pe1 <--> peer1.peer1-eth0) to r0
+Adding link (r0.r0-pe1 <--> peer1.peer1-eth0) to peer1
+Adding link (r0.r0-c0 <--> cust0.cust0-i0) to r0
+Adding link (r0.r0-c0 <--> cust0.cust0-i0) to cust0
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'A']
+Adding Event 'advert' occurring at time 1 with parameters ['peer1', '4.4.4.0/22', 'X']
+Adding Event 'advert' occurring at time 1 with parameters ['prov0', '4.4.4.0/22', 'A X']
+Adding Event 'advert' occurring at time 1 with parameters ['peer1', '2.2.2.0/24', 'X Y Z']
+Adding Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.3.0/24 2.2.128.0/17', 'C C']
+Adding Event 'advert' occurring at time 3 with parameters ['prov0', '2.2.2.0/24', 'A Z']
+Adding Event 'dumpfib' occurring at time 4 with parameters ['all']
+Adding Event 'advert' occurring at time 7 with parameters ['cust0', '2.2.2.0/24', 'C F Z Z Z']
+Adding Event 'advert' occurring at time 9 with parameters ['peer1', '2.2.3.0/24', 'X C']
+Adding Event 'dumpfib' occurring at time 12 with parameters ['all']
+Adding Event 'addprivatepath' occurring at time 13 with parameters ['cust0', '2.2.2.0/24', 'C E Z']
+Adding Event 'dumpfib' occurring at time 18 with parameters ['all']
+
+
+** Simulation **
+
+= Time 1 =
+
+Event 'advert' occurring at time 1 with parameters ['prov0', '0.0.0.0/0', 'A']
+Event 'advert' occurring at time 1 with parameters ['peer1', '4.4.4.0/22', 'X']
+Event 'advert' occurring at time 1 with parameters ['prov0', '4.4.4.0/22', 'A X']
+Event 'advert' occurring at time 1 with parameters ['peer1', '2.2.2.0/24', 'X Y Z']
+Event 'advert' occurring at time 1 with parameters ['cust0', '2.2.3.0/24 2.2.128.0/17', 'C C']
+
+
+= Time 2 =
+
+
+= Time 3 =
+
+Event 'advert' occurring at time 3 with parameters ['prov0', '2.2.2.0/24', 'A Z']
+
+
+= Time 4 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.2.0/24 via r0-pe1
+2.2.3.0/24 via r0-c0
+2.2.128.0/17 via r0-c0
+4.4.4.0/22 via r0-pe1
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.2.0/24 directly connected
+2.2.3.0/24 via prov0-eth0
+2.2.128.0/17 via prov0-eth0
+4.4.4.0/22 directly connected
+
+FIB router peer1
+2.2.2.0/24 directly connected
+2.2.3.0/24 via peer1-eth0
+2.2.128.0/17 via peer1-eth0
+4.4.4.0/22 directly connected
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.2.0/24 via cust0-i0
+2.2.3.0/24 directly connected
+2.2.128.0/17 directly connected
+4.4.4.0/22 via cust0-i0
+
+
+= Time 5 =
+
+
+= Time 6 =
+
+
+= Time 7 =
+
+Event 'advert' occurring at time 7 with parameters ['cust0', '2.2.2.0/24', 'C F Z Z Z']
+
+
+= Time 8 =
+
+
+= Time 9 =
+
+Event 'advert' occurring at time 9 with parameters ['peer1', '2.2.3.0/24', 'X C']
+
+
+= Time 10 =
+
+
+= Time 11 =
+
+
+= Time 12 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.2.0/24 via r0-c0
+2.2.3.0/24 via r0-c0
+2.2.128.0/17 via r0-c0
+4.4.4.0/22 via r0-pe1
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.2.0/24 via prov0-eth0
+2.2.3.0/24 via prov0-eth0
+2.2.128.0/17 via prov0-eth0
+4.4.4.0/22 directly connected
+
+FIB router peer1
+2.2.2.0/24 via peer1-eth0
+2.2.3.0/24 directly connected
+2.2.128.0/17 via peer1-eth0
+4.4.4.0/22 directly connected
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.2.0/24 directly connected
+2.2.3.0/24 directly connected
+2.2.128.0/17 directly connected
+4.4.4.0/22 via cust0-i0
+
+
+= Time 13 =
+
+Event 'addprivatepath' occurring at time 13 with parameters ['cust0', '2.2.2.0/24', 'C E Z']
+
+
+= Time 14 =
+
+
+= Time 15 =
+
+
+= Time 16 =
+
+
+= Time 17 =
+
+
+= Time 18 =
+
+FIB router r0
+0.0.0.0/0 via r0-pr0
+2.2.2.0/24 via r0-pe1
+2.2.3.0/24 via r0-c0
+2.2.128.0/17 via r0-c0
+4.4.4.0/22 via r0-pe1
+
+FIB router prov0
+0.0.0.0/0 directly connected
+2.2.2.0/24 directly connected
+2.2.3.0/24 via prov0-eth0
+2.2.128.0/17 via prov0-eth0
+4.4.4.0/22 directly connected
+
+FIB router peer1
+2.2.2.0/24 directly connected
+2.2.3.0/24 directly connected
+2.2.128.0/17 via peer1-eth0
+4.4.4.0/22 directly connected
+
+FIB router cust0
+0.0.0.0/0 via cust0-i0
+2.2.2.0/24 directly connected
+2.2.3.0/24 directly connected
+2.2.128.0/17 directly connected
+4.4.4.0/22 via cust0-i0
+
+
+= Time 19 =
+
+
+= Time 20 =
+
+
+
+** Simulation Report **
+
+Path revenues per time step: [0, 0, 0, 50, 50, 50, 42, 42, 37, 37, 37, 37, -99, -35, 29, 29, 29, 29, 29, 29]
+Total path revenues: 422
+Total number of messages received by EXT routers: 9
+Total revenues: 404
+
+

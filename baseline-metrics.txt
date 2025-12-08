@@ -1,0 +1,41 @@
+
+** Metrics for test A1 **
+[Command: python3 simulator/simulator.py -c tests-configs/A1-config.json]
+Total revenues: 527
+
+** Metrics for test A2 **
+[Command: python3 simulator/simulator.py -c tests-configs/A2-config.json]
+Total revenues: 295
+
+** Metrics for test A3 **
+[Command: python3 simulator/simulator.py -c tests-configs/A3-config.json]
+Total revenues: 12217
+
+** Metrics for test B1 **
+[Command: python3 simulator/simulator.py -c tests-configs/B1-config.json]
+Total revenues: 404
+
+** Metrics for test B2 **
+[Command: python3 simulator/simulator.py -c tests-configs/B2-config.json]
+Total revenues: 4655
+
+** Metrics for test B3 **
+[Command: python3 simulator/simulator.py -c tests-configs/B3-config.json]
+Total revenues: 5400
+
+** Metrics for test C1 **
+[Command: python3 simulator/simulator.py -c tests-configs/C1-config.json]
+Total revenues: 86
+
+** Metrics for test C2 **
+[Command: python3 simulator/simulator.py -c tests-configs/C2-config.json]
+Total revenues: 116
+
+** Metrics for test C3 **
+[Command: python3 simulator/simulator.py -c tests-configs/C3-config.json]
+Total revenues: 198
+
+** Metrics for test C4 **
+[Command: python3 simulator/simulator.py -c tests-configs/C4-config.json]
+Total revenues: 326
+

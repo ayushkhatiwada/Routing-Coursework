@@ -1,0 +1,144 @@
+{
+  "routers": [
+    {
+      "rId": "r0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "EGP"
+    },
+    {
+      "rId": "prov0",
+      "ipAddress": "3.3.3.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "prov1",
+      "ipAddress": "4.2.7.5",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    }
+  ],
+  "links": [
+    {
+      "id": "lp0",
+      "interfaces": ["r0-pr0", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-10"
+      }
+    },
+    {
+      "id": "lp1",
+      "interfaces": ["r0-pr1", "prov1-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-17"
+      }
+    },
+    {
+      "id": "lc0",
+      "interfaces": ["r0-c0", "cust0-i0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+16"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-pr0": "3.3.3.1",
+          "r0-pr1": "4.2.7.5",
+          "r0-c0": "2.2.2.2"
+        },
+        "relations": {
+          "r0-pr0": "provider",
+          "r0-pr1": "provider",
+          "r0-c0": "customer"
+        }
+      }
+    },
+    "ext": {
+      "prov0": {
+        "AS-ID": "A",
+        "relation": "provider"
+      },
+      "prov1": {
+        "AS-ID": "F",
+        "relation": "provider"
+      },
+      "cust0": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "A B C D"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "150.0.0.0/8",
+      "AS-path": "A M"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov1",
+      "prefix": "200.0.0.0/16",
+      "AS-path": "F G H"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.2.0/24",
+      "AS-path": "Z"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "advert",
+      "time": 5,
+      "router": "prov1",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "F G D"
+    },
+    {
+      "type": "dumpfib",
+      "time": 7,
+      "args": "all"
+    },
+    {
+      "type": "advert",
+      "time": 8,
+      "router": "prov0",
+      "prefix": "100.0.0.0/8",
+      "AS-path": "A B C G D"
+    },
+    {
+      "type": "dumpfib",
+      "time": 10,
+      "args": "all"
+    },
+    {
+      "type": "stop",
+      "time": 11
+    }
+  ]
+}

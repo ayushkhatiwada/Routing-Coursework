@@ -1,0 +1,280 @@
+{
+  "routers": [
+    {
+      "rId": "r0",
+      "ipAddress": "1.1.1.1",
+      "routingProtocol": "EGP"
+    },
+    {
+      "rId": "cust0",
+      "ipAddress": "2.2.2.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "prov0",
+      "ipAddress": "3.3.3.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "peer1",
+      "ipAddress": "4.4.4.1",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "peer2",
+      "ipAddress": "5.5.1.3",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "cust1",
+      "ipAddress": "15.1.1.2",
+      "routingProtocol": "ext"
+    },
+    {
+      "rId": "prov1",
+      "ipAddress": "13.0.0.4",
+      "routingProtocol": "ext"
+    }
+  ],
+  "links": [
+    {
+      "id": "lc0",
+      "interfaces": ["r0-c0", "cust0-i0"],
+      "status": "up",
+      "properties": {
+        "revenues": "+5"
+      }
+    },
+    {
+      "id": "lp0",
+      "interfaces": ["r0-pr0", "prov0-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-3"
+      }
+    },
+    {
+      "id": "lp1",
+      "interfaces": ["r0-pr1", "prov1-i0"],
+      "status": "up",
+      "properties": {
+        "revenues": "-5"
+      }
+    },
+    {
+      "id": "lc1",
+      "interfaces": ["r0-c1", "cust1-eth2"],
+      "status": "up",
+      "properties": {
+        "revenues": "+4"
+      }
+    },
+    {
+      "id": "lpe1",
+      "interfaces": ["r0-pe1", "peer1-eth0"],
+      "status": "up",
+      "properties": {
+        "revenues": "0"
+      }
+    },
+    {
+      "id": "lpe2",
+      "interfaces": ["r0-pe2", "peer2-i1"],
+      "status": "up",
+      "properties": {
+        "revenues": "0"
+      }
+    }
+  ],
+  "routingProtocols": {
+    "EGP": {
+      "r0": {
+        "AS-ID": "O",
+        "neighbours": {
+          "r0-pr0": "3.3.3.1",
+          "r0-pr1": "13.0.0.4",
+          "r0-pe1": "4.4.4.1",
+          "r0-pe2": "5.5.1.3",
+          "r0-c0": "2.2.2.2",
+          "r0-c1": "15.1.1.2"
+        },
+        "relations": {
+          "r0-pr0": "provider",
+          "r0-pr1": "provider",
+          "r0-pe1": "peer",
+          "r0-pe2": "peer",
+          "r0-c0": "customer",
+          "r0-c1": "customer"
+        }
+      }
+    },
+    "ext": {
+      "prov0": {
+        "AS-ID": "Q",
+        "relation": "provider"
+      },
+      "prov1": {
+        "AS-ID": "P",
+        "relation": "provider"
+      },
+      "cust0": {
+        "AS-ID": "C",
+        "relation": "customer"
+      },
+      "cust1": {
+        "AS-ID": "Z",
+        "relation": "customer"
+      },
+      "peer1": {
+        "AS-ID": "X",
+        "relation": "peer"
+      },
+      "peer2": {
+        "AS-ID": "W",
+        "relation": "peer"
+      }
+    }
+  },
+  "events": [
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "0.0.0.0/0",
+      "AS-path": "Q"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov1",
+      "prefix": "0.0.0.0/0",
+      "AS-path": "P"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "100.0.0.0/24",
+      "AS-path": "Q M"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov1",
+      "prefix": "100.0.0.0/24",
+      "AS-path": "P M"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "peer1",
+      "prefix": "100.0.0.0/24",
+      "AS-path": "X L M"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov0",
+      "prefix": "200.0.0.0/24",
+      "AS-path": "Q H K"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "prov1",
+      "prefix": "200.0.0.0/24",
+      "AS-path": "P K"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "peer1",
+      "prefix": "200.0.0.0/24",
+      "AS-path": "X L K"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "peer2",
+      "prefix": "200.0.0.0/24",
+      "AS-path": "W G H K"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust0",
+      "prefix": "2.2.0.0/16",
+      "AS-path": "C"
+    },
+    {
+      "type": "advert",
+      "time": 1,
+      "router": "cust1",
+      "prefix": "15.1.1.0/24",
+      "AS-path": "Z Z"
+    },
+    {
+      "type": "dumpfib",
+      "time": 4,
+      "args": "all"
+    },
+    {
+      "type": "downlink",
+      "time": 5,
+      "link": ["r0-pr0", "prov0-eth0"]
+    },
+    {
+      "type": "dumpfib",
+      "time": 8,
+      "args": "all"
+    },
+    {
+      "type": "uplink",
+      "time": 9,
+      "link": ["r0-pr0", "prov0-eth0"]
+    },
+    {
+      "type": "dumpfib",
+      "time": 11,
+      "args": "all"
+    },
+    {
+      "type": "downlink",
+      "time": 15,
+      "link": ["r0-pe1", "peer1-eth0"]
+    },
+    {
+      "type": "dumpfib",
+      "time": 18,
+      "args": "all"
+    },
+    {
+      "type": "addprivatepath",
+      "time": 19,
+      "router": "peer1",
+      "prefix": "100.0.0.0/24",
+      "AS-path": "X I M"
+    },
+    {
+      "type": "advert",
+      "time": 19,
+      "router": "peer1",
+      "prefix": "200.0.0.0/24",
+      "AS-path": "X K"
+    },
+    {
+      "type": "uplink",
+      "time": 21,
+      "link": ["r0-pe1", "peer1-eth0"]
+    },
+    {
+      "type": "dumpfib",
+      "time": 25,
+      "args": "all"
+    },
+    {
+      "type": "stop",
+      "time": 30
+    }
+  ]
+}
