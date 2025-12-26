@@ -36,7 +36,7 @@ class EGP(AbstractRoutingDaemon):
             payload = Payload()
             payload.addEntry("Hello world, here is router {} speaking".format(self._id))
             pkt.setPayload(payload)
-        return pkt
+        return None
 
     def __str__(self):
         s = "EGP object {}".format(hash(self))
