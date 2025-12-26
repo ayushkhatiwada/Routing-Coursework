@@ -23,6 +23,8 @@ class EGP(AbstractRoutingDaemon):
     def update(self, interfaces2state, currentTime):
         pass
 
+    # These two methods will be called at each step processRoutingPacket & generateRoutingPacket
+
     "Processor of a new packet received by the router and destined to this routing algorithm."
     def processRoutingPacket(self, packet, iface):
         print("[EGP] Router {}: I have just received a routing packet with payload {} on interface {}".format(self._id,packet.getPayload().getData(),iface))
@@ -37,6 +39,7 @@ class EGP(AbstractRoutingDaemon):
             payload.addEntry("Hello world, here is router {} speaking".format(self._id))
             pkt.setPayload(payload)
         return None
+
 
     def __str__(self):
         s = "EGP object {}".format(hash(self))
