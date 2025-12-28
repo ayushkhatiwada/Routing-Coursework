@@ -230,8 +230,8 @@ class EGP(AbstractRoutingDaemon):
             self._fib.removeEntry(dest)
             return
         
-        # Sort: higher relation priority first, then shorter path, then iface name
-        candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
+        # Sort: higher relation priority first, then iface name (for stability), then shorter path
+        candidates.sort(key=lambda x: (-x[0], x[2], x[1]))
         
         best = candidates[0]
         best_iface = best[2]
