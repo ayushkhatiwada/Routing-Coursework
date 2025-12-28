@@ -93,6 +93,11 @@ class Simulator:
             self._routers[self._links[i].getRouter(0)].addLink(self._links[i]) 
             self._routers[self._links[i].getRouter(1)].addLink(self._links[i])
 
+
+
+
+
+    # Most important - main_loop
     """
         Main loop of the simulator that runs through all the tasks at each
         time step. At each time step the Simulator carries out (in order)   
@@ -102,19 +107,34 @@ class Simulator:
     def main_loop(self):
         now = 1
         print("\n\n** Simulation **")
+
+        # until there is another event to simulate
         while(now < self._stop_time):
             print("\n= Time {} =".format(now))
+
             self.process_events(now)
             (datalog,routinglog) = self.process_routers(now)
+
+            # Transfer packets from one link to another
+            # Packets are queued in a link
+            # Last thing that is done in each step of the simulation, is to move packets from one link to another
+            # So that they are ready to be processed in the next step
             self.process_packets()
+
             if len(datalog) > 0:
                 print("\n".join(datalog) + "\n")
             if len(routinglog) > 0:
                 print("\n".join(routinglog) + "\n")
+
             self.check_iteration(now)
             now += 1
+
         self.check_completed()
         self.print_report()
+
+
+
+
 
     """
         Process the events scheduled for the time now.
@@ -211,6 +231,8 @@ class Simulator:
         rlog = []
         for rId in self._routers:
             self._routers[rId].setTimeStep(now)
+
+            # .go() puts everything together on the router perspective
             (dlist,rlist) = self._routers[rId].go()
             dlog += dlist
             rlog += rlist

@@ -274,7 +274,16 @@ class Router:
         Main interface method, called by simulator at each time step.
     """
     def go(self):
+       # self._ralg is either EGP or EXT
+       # the routing algorithm that is bound to this router
+
+       # When this method is called by the simulator
+       # The first thing that will happen on each simluation step
+       # is the router object will call the update method in our EGP
+       # with the state of all interfaces and the current time
+
        self._ralg.update(self.getStateAllInterfaces(),self.getCurrentTime())
+
        datalog = self._processPackets()
        self._sendRoutingMessages()
        routinglog = self._finalizeIteration()
