@@ -196,9 +196,8 @@ class EGP(AbstractRoutingDaemon):
         """
         Select best route for a destination based on:
         1. Relation preference: customer > peer > provider
-        2. Prefer existing route if same relation (avoid churn/inconsistency)
-        3. Shorter AS-path length (only used as tie-breaker)
-        4. Lexicographically smaller interface name (for determinism)
+        2. Shorter AS-path length
+        3. Lexicographically smaller interface name (for determinism)
         """
         if dest not in self._received_routes or not self._received_routes[dest]:
             # No routes available - remove from best routes and FIB
@@ -208,13 +207,6 @@ class EGP(AbstractRoutingDaemon):
             return
         
         candidates = []
-        current_iface = None
-        current_relation_priority = -1
-        
-        if dest in self._best_routes:
-            current_iface = self._best_routes[dest][0]
-            current_relation = self._relations.get(current_iface, 'provider')
-            current_relation_priority = self._get_relation_priority(current_relation)
         
         for iface, as_path in self._received_routes[dest].items():
             # Skip routes that contain our AS (loop detection)
@@ -229,10 +221,7 @@ class EGP(AbstractRoutingDaemon):
             relation_priority = self._get_relation_priority(relation)
             path_length = len(as_path.split())
             
-            # Flag to prefer current route when same relation
-            is_current = 1 if iface == current_iface else 0
-            
-            candidates.append((relation_priority, is_current, -path_length, iface, as_path))
+            candidates.append((relation_priority, path_length, iface, as_path))
         
         if not candidates:
             # No valid routes
@@ -241,13 +230,12 @@ class EGP(AbstractRoutingDaemon):
             self._fib.removeEntry(dest)
             return
         
-        # Sort: higher relation priority first, then prefer current, then shorter path, then iface
-        # Using -path_length so that sorting descending gives shorter paths
-        candidates.sort(key=lambda x: (-x[0], -x[1], -x[2], x[3]))
+        # Sort: higher relation priority first, then shorter path, then iface name
+        candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
         
         best = candidates[0]
-        best_iface = best[3]
-        best_path = best[4]
+        best_iface = best[2]
+        best_path = best[3]
         
         self._best_routes[dest] = (best_iface, best_path)
         self._fib.setEntry(dest, [best_iface])
