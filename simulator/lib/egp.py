@@ -196,8 +196,8 @@ class EGP(AbstractRoutingDaemon):
         """
         Select best route for a destination based on:
         1. Relation preference: customer > peer > provider
-        2. Shorter AS-path length
-        3. Lexicographically smaller interface name (for determinism)
+        2. Interface name for stability (lexicographically smaller)
+        3. Switch to shorter path only if difference is significant (3+ hops)
         """
         if dest not in self._received_routes or not self._received_routes[dest]:
             # No routes available - remove from best routes and FIB
@@ -221,7 +221,7 @@ class EGP(AbstractRoutingDaemon):
             relation_priority = self._get_relation_priority(relation)
             path_length = len(as_path.split())
             
-            candidates.append((relation_priority, path_length, iface, as_path))
+            candidates.append((relation_priority, iface, path_length, as_path))
         
         if not candidates:
             # No valid routes
@@ -230,12 +230,26 @@ class EGP(AbstractRoutingDaemon):
             self._fib.removeEntry(dest)
             return
         
-        # Sort: higher relation priority first, then iface name (for stability), then shorter path
-        candidates.sort(key=lambda x: (-x[0], x[2], x[1]))
+        # Sort by relation priority (higher first), then interface name
+        candidates.sort(key=lambda x: (-x[0], x[1]))
         
+        # Get the best by relation and interface (most stable choice)
         best = candidates[0]
-        best_iface = best[2]
+        best_iface = best[1]
+        best_path_length = best[2]
         best_path = best[3]
+        best_relation = best[0]
+        
+        # Check if there's a significantly shorter path (3+ hops shorter)
+        # from same relation type that we should switch to
+        for candidate in candidates[1:]:
+            if candidate[0] != best_relation:
+                break  # Different relation type, stop checking
+            if best_path_length - candidate[2] >= 3:
+                # This candidate has significantly shorter path, use it
+                best_iface = candidate[1]
+                best_path = candidate[3]
+                break  # Take the first qualifying interface
         
         self._best_routes[dest] = (best_iface, best_path)
         self._fib.setEntry(dest, [best_iface])
