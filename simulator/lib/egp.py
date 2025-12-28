@@ -1,47 +1,365 @@
 from routingAbstractions import AbstractRoutingDaemon
-from packet import RoutingPacket,Payload
+from packet import RoutingPacket, Payload
+
 
 class EGP(AbstractRoutingDaemon):
+    """
+    Simplified BGP implementation for Stage 1 coursework.
+    Handles route exchange with EXT neighbors using customer-provider-peer policy model.
+    """
 
-    "Constructor"
     def __init__(self):
         super().__init__()
-        self._id = None
-        self._sentPerInterface = {}
+        self._id = None                     # Router ID
+        self._ip = None                     # Router IP address
+        self._fib = None                    # ForwardingTable reference
+        self._asn = None                    # Local AS number
+        self._neighbours = {}               # iface -> neighbour IP
+        self._relations = {}                # iface -> relation (customer/peer/provider)
+        self._ip_to_iface = {}              # neighbour IP -> iface
+        
+        # Route storage
+        self._received_routes = {}          # dest -> { iface -> as_path }
+        self._best_routes = {}              # dest -> (iface, as_path)
+        
+        # Advertisement tracking
+        self._advertised = {}               # iface -> { dest -> as_path }
+        self._routes_changed = set()        # destinations with route changes this round
+        
+        # Link state tracking
+        self._link_states = {}              # iface -> 'up' or 'down'
+        self._first_update = True           # Flag for first update call
 
-    "Setter of router-local parameters specified in the configuration and of options to be applied to all routers"
     def setParameters(self, parameters):
-        print("[EGP] Received parameters: {}".format(parameters))
+        """Store AS-ID and neighbor/relation info from configuration."""
+        self._asn = parameters.get('AS-ID', 'UNKNOWN')
+        
+        if 'neighbours' in parameters:
+            self._neighbours = dict(parameters['neighbours'])
+            # Build reverse mapping
+            for iface, ip in self._neighbours.items():
+                self._ip_to_iface[ip] = iface
+        
+        if 'relations' in parameters:
+            self._relations = dict(parameters['relations'])
 
-    "Setter of the router ID and reference to forwarding table used to forward packets"
     def bindToRouter(self, router_id, router_ip, fwd_table):
+        """Store router ID, IP, and forwarding table reference."""
         self._id = router_id
         self._ip = router_ip
-        print("[EGP] Current forwarding table of {}\n{}".format(router_id,fwd_table.getDescription(router_id)))
+        self._fib = fwd_table
 
-    "Refresher that is run at the beginning of every simulation round."
     def update(self, interfaces2state, currentTime):
-        pass
+        """
+        Handle link state changes at the beginning of each simulation round.
+        """
+        for iface in interfaces2state:
+            new_state = interfaces2state[iface]['state']
+            old_state = self._link_states.get(iface, None)
+            
+            if old_state is None:
+                # First time seeing this interface
+                self._link_states[iface] = new_state
+                continue
+            
+            if old_state != new_state:
+                self._link_states[iface] = new_state
+                
+                if new_state == 'down':
+                    # Link went down - remove all routes via this interface
+                    self._handle_link_down(iface)
+                else:
+                    # Link came up - mark for re-announcement
+                    self._handle_link_up(iface)
+        
+        self._first_update = False
 
-    # These two methods will be called at each step processRoutingPacket & generateRoutingPacket
+    def _handle_link_down(self, iface):
+        """Handle link failure - remove routes received via this interface."""
+        affected_dests = set()
+        
+        # Remove all routes received on this interface
+        for dest in list(self._received_routes.keys()):
+            if iface in self._received_routes[dest]:
+                del self._received_routes[dest][iface]
+                affected_dests.add(dest)
+                if not self._received_routes[dest]:
+                    del self._received_routes[dest]
+        
+        # Re-select best routes for affected destinations
+        for dest in affected_dests:
+            self._select_best_route(dest)
+            self._routes_changed.add(dest)
 
-    "Processor of a new packet received by the router and destined to this routing algorithm."
+    def _handle_link_up(self, iface):
+        """Handle link coming up - mark routes for re-advertisement."""
+        # Clear advertised state for this interface to trigger re-announcement
+        if iface in self._advertised:
+            self._advertised[iface] = {}
+        
+        # Mark all destinations as changed to trigger advertisements
+        for dest in self._best_routes:
+            self._routes_changed.add(dest)
+
     def processRoutingPacket(self, packet, iface):
-        print("[EGP] Router {}: I have just received a routing packet with payload {} on interface {}".format(self._id,packet.getPayload().getData(),iface))
+        """
+        Process routing packets received from EXT neighbors.
+        Parse EGP-update and EGP-withdrawal messages.
+        """
+        payload = packet.getPayload().getData()
+        speaker = None
+        processed_dests = set()
+        
+        for data in payload:
+            if data.startswith('speaker'):
+                # Extract speaker IP: "speaker: <IP>" or "speaker <IP>"
+                parts = data.split()
+                if len(parts) >= 2:
+                    speaker = parts[1].rstrip(':')
+                    if speaker.endswith(':'):
+                        speaker = speaker[:-1]
+                    # Handle "speaker: IP" format
+                    if ':' in data and len(parts) >= 2:
+                        speaker = data.split(':')[1].strip()
+            
+            elif data.startswith('EGP-update'):
+                # Format: "EGP-update prefix: <prefix> AS-path: <as_path>"
+                dest = self._parse_prefix(data)
+                as_path = self._parse_aspath(data)
+                
+                if dest and as_path is not None:
+                    if dest in processed_dests:
+                        # Skip duplicate updates for same dest in same packet
+                        continue
+                    processed_dests.add(dest)
+                    
+                    # Prepend our AS to the path
+                    new_path = "{} {}".format(self._asn, as_path)
+                    
+                    # Store the route
+                    if dest not in self._received_routes:
+                        self._received_routes[dest] = {}
+                    self._received_routes[dest][iface] = new_path
+                    
+                    # Re-select best route for this destination
+                    self._select_best_route(dest)
+                    self._routes_changed.add(dest)
+            
+            elif data.startswith('EGP-withdrawal'):
+                # Format: "EGP-withdrawal prefix: <prefix>"
+                dest = self._parse_prefix(data)
+                
+                if dest:
+                    if dest in processed_dests:
+                        continue
+                    processed_dests.add(dest)
+                    
+                    # Remove the route from this interface
+                    if dest in self._received_routes and iface in self._received_routes[dest]:
+                        del self._received_routes[dest][iface]
+                        if not self._received_routes[dest]:
+                            del self._received_routes[dest]
+                    
+                    # Re-select best route for this destination
+                    self._select_best_route(dest)
+                    self._routes_changed.add(dest)
 
-    "Generator of control-plane packet to be sent out of the input interface in the current round. It must return a RoutingPacket object, or None (if no packet needs to be sent)."
-    def generateRoutingPacket(self, iface):
-        pkt = None
-        if iface not in self._sentPerInterface:
-            self._sentPerInterface[iface] = True
-            pkt = RoutingPacket(self._id)
-            payload = Payload()
-            payload.addEntry("Hello world, here is router {} speaking".format(self._id))
-            pkt.setPayload(payload)
+    def _parse_prefix(self, data):
+        """Extract prefix from EGP-update or EGP-withdrawal message."""
+        # Format: "EGP-update prefix: <prefix> AS-path: <path>"
+        # or "EGP-withdrawal prefix: <prefix>"
+        try:
+            if 'prefix:' in data:
+                parts = data.split('prefix:')
+                if len(parts) >= 2:
+                    prefix_part = parts[1].strip()
+                    # Take first word (prefix) before AS-path
+                    prefix = prefix_part.split()[0]
+                    return prefix
+        except:
+            pass
         return None
 
+    def _parse_aspath(self, data):
+        """Extract AS-path from EGP-update message."""
+        # Format: "EGP-update prefix: <prefix> AS-path: <path>"
+        try:
+            if 'AS-path:' in data:
+                parts = data.split('AS-path:')
+                if len(parts) >= 2:
+                    return parts[1].strip()
+        except:
+            pass
+        return None
+
+    def _select_best_route(self, dest):
+        """
+        Select best route for a destination based on:
+        1. Relation preference: customer > peer > provider
+        2. Prefer existing route if same relation (avoid churn/inconsistency)
+        3. Shorter AS-path length (only used as tie-breaker)
+        4. Lexicographically smaller interface name (for determinism)
+        """
+        if dest not in self._received_routes or not self._received_routes[dest]:
+            # No routes available - remove from best routes and FIB
+            if dest in self._best_routes:
+                del self._best_routes[dest]
+            self._fib.removeEntry(dest)
+            return
+        
+        candidates = []
+        current_iface = None
+        current_relation_priority = -1
+        
+        if dest in self._best_routes:
+            current_iface = self._best_routes[dest][0]
+            current_relation = self._relations.get(current_iface, 'provider')
+            current_relation_priority = self._get_relation_priority(current_relation)
+        
+        for iface, as_path in self._received_routes[dest].items():
+            # Skip routes that contain our AS (loop detection)
+            if self._has_loop(as_path):
+                continue
+            
+            # Skip routes via down interfaces
+            if self._link_states.get(iface, 'up') == 'down':
+                continue
+            
+            relation = self._relations.get(iface, 'provider')
+            relation_priority = self._get_relation_priority(relation)
+            path_length = len(as_path.split())
+            
+            # Flag to prefer current route when same relation
+            is_current = 1 if iface == current_iface else 0
+            
+            candidates.append((relation_priority, is_current, -path_length, iface, as_path))
+        
+        if not candidates:
+            # No valid routes
+            if dest in self._best_routes:
+                del self._best_routes[dest]
+            self._fib.removeEntry(dest)
+            return
+        
+        # Sort: higher relation priority first, then prefer current, then shorter path, then iface
+        # Using -path_length so that sorting descending gives shorter paths
+        candidates.sort(key=lambda x: (-x[0], -x[1], -x[2], x[3]))
+        
+        best = candidates[0]
+        best_iface = best[3]
+        best_path = best[4]
+        
+        self._best_routes[dest] = (best_iface, best_path)
+        self._fib.setEntry(dest, [best_iface])
+
+    def _has_loop(self, as_path):
+        """Check if AS-path contains our AS (loop detection)."""
+        ases = as_path.split()
+        # Check if our AS appears more than once (at the beginning)
+        # Our AS is at position 0 (we prepended it), so look for duplicates
+        for i, asn in enumerate(ases):
+            if i > 0 and asn == self._asn:
+                return True
+        return False
+
+    def _get_relation_priority(self, relation):
+        """Get priority for relation type. Higher is better."""
+        if relation == 'customer':
+            return 3
+        elif relation == 'peer':
+            return 2
+        elif relation == 'provider':
+            return 1
+        return 0
+
+    def generateRoutingPacket(self, iface):
+        """
+        Generate routing packet for this interface based on export policy:
+        - Routes from customers -> advertise to all
+        - Routes from peers/providers -> advertise only to customers
+        """
+        if iface not in self._neighbours:
+            return None
+        
+        # Check if link is up
+        if self._link_states.get(iface, 'up') == 'down':
+            return None
+        
+        neighbour_relation = self._relations.get(iface, 'provider')
+        to_announce = []
+        to_withdraw = []
+        
+        # Initialize advertised tracking for this interface
+        if iface not in self._advertised:
+            self._advertised[iface] = {}
+        
+        # Determine what we should be advertising
+        should_advertise = {}
+        
+        for dest, (route_iface, as_path) in self._best_routes.items():
+            # Don't advertise routes back to the interface we learned them from
+            if route_iface == iface:
+                continue
+            
+            route_relation = self._relations.get(route_iface, 'provider')
+            
+            # Export policy check
+            if self._should_export(route_relation, neighbour_relation):
+                should_advertise[dest] = as_path
+        
+        # Find new announcements
+        for dest, as_path in should_advertise.items():
+            if dest not in self._advertised[iface]:
+                # New route
+                to_announce.append((dest, as_path))
+            elif self._advertised[iface][dest] != as_path:
+                # Route changed
+                to_announce.append((dest, as_path))
+        
+        # Find withdrawals
+        for dest in list(self._advertised[iface].keys()):
+            if dest not in should_advertise:
+                to_withdraw.append(dest)
+        
+        # Build packet if there's something to send
+        if not to_announce and not to_withdraw:
+            return None
+        
+        pkt = RoutingPacket(self._ip)
+        payload = Payload()
+        payload.addEntry("speaker: {}".format(self._ip))
+        
+        for (dest, as_path) in to_announce:
+            payload.addEntry("EGP-update prefix: {} AS-path: {}".format(dest, as_path))
+            self._advertised[iface][dest] = as_path
+        
+        for dest in to_withdraw:
+            payload.addEntry("EGP-withdrawal prefix: {}".format(dest))
+            if dest in self._advertised[iface]:
+                del self._advertised[iface][dest]
+        
+        pkt.setPayload(payload)
+        return pkt
+
+    def _should_export(self, route_relation, neighbour_relation):
+        """
+        Determine if a route should be exported based on customer-provider-peer policy.
+        - Routes from customers -> export to all
+        - Routes from peers/providers -> export only to customers
+        """
+        if route_relation == 'customer':
+            # Customer routes go to everyone
+            return True
+        else:
+            # Peer/provider routes only go to customers
+            return neighbour_relation == 'customer'
+
+    def getCurrentRoutes(self):
+        """Return current best routes for the checker."""
+        result = {}
+        for dest, (iface, as_path) in self._best_routes.items():
+            result[dest] = as_path
+        return result
 
     def __str__(self):
-        s = "EGP object {}".format(hash(self))
-        return s
-
+        return "EGP object {} (AS {})".format(hash(self), self._asn)
